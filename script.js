@@ -1,3 +1,6 @@
+// Number Guessing Game - Fixed Version
+let game = null;
+
 class NumberGuessingGame {
     constructor() {
         this.secretNumber = null;
@@ -7,10 +10,12 @@ class NumberGuessingGame {
         this.minRange = 1;
         this.maxRange = 100;
         this.bestScore = localStorage.getItem('bestScore') || null;
-        
+
+        console.log('Game initializing...');
         this.initializeElements();
         this.attachEventListeners();
         this.startNewGame();
+        console.log('Game initialized successfully!');
     }
 
     initializeElements() {
@@ -25,22 +30,35 @@ class NumberGuessingGame {
         this.minRangeDisplay = document.getElementById('minRange');
         this.maxRangeDisplay = document.getElementById('maxRange');
         this.confettiContainer = document.getElementById('confettiContainer');
+
+        console.log('Elements initialized');
     }
 
     attachEventListeners() {
-        this.guessBtn.addEventListener('click', () => this.makeGuess());
-        this.guessInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.makeGuess();
-        });
-        this.restartBtn.addEventListener('click', () => this.startNewGame());
-        
-        // Add input focus effect
-        this.guessInput.addEventListener('focus', () => {
-            this.guessInput.parentElement.style.transform = 'scale(1.01)';
-        });
-        this.guessInput.addEventListener('blur', () => {
-            this.guessInput.parentElement.style.transform = 'scale(1)';
-        });
+        if (this.guessBtn) {
+            this.guessBtn.addEventListener('click', () => {
+                console.log('Guess button clicked');
+                this.makeGuess();
+            });
+        }
+
+        if (this.guessInput) {
+            this.guessInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    console.log('Enter key pressed');
+                    this.makeGuess();
+                }
+            });
+        }
+
+        if (this.restartBtn) {
+            this.restartBtn.addEventListener('click', () => {
+                console.log('Restart button clicked');
+                this.startNewGame();
+            });
+        }
+
+        console.log('Event listeners attached');
     }
 
     startNewGame() {
@@ -49,21 +67,30 @@ class NumberGuessingGame {
         this.guessHistory = [];
         this.minRange = 1;
         this.maxRange = 100;
-        
+
+        console.log('New game started. Secret number:', this.secretNumber);
+
         this.updateDisplay();
-        this.guessInput.value = '';
-        this.guessInput.disabled = false;
-        this.guessBtn.disabled = false;
-        this.historyList.innerHTML = '';
-        
+        if (this.guessInput) {
+            this.guessInput.value = '';
+            this.guessInput.disabled = false;
+            this.guessInput.style.opacity = '1';
+        }
+        if (this.guessBtn) {
+            this.guessBtn.disabled = false;
+            this.guessBtn.style.opacity = '1';
+        }
+        if (this.historyList) {
+            this.historyList.innerHTML = '';
+        }
+
         this.showFeedback('Make your first guess!', 'neutral');
         this.updateRangeDisplay();
-        
-        if (this.bestScore) {
+
+        if (this.bestScore && this.bestScoreDisplay) {
             this.bestScoreDisplay.textContent = this.bestScore;
         }
-        
-        // Animate new game start
+
         this.animateNewGame();
     }
 
@@ -80,10 +107,13 @@ class NumberGuessingGame {
     }
 
     makeGuess() {
-        const guess = parseInt(this.guessInput.value);
-        
+        const rawValue = this.guessInput.value.trim();
+        const guess = parseInt(rawValue);
+
+        console.log('Making guess with raw value:', rawValue, 'Parsed:', guess);
+
         // Validation
-        if (!guess || guess < 1 || guess > 100) {
+        if (isNaN(guess) || guess < 1 || guess > 100) {
             this.showFeedback('⚠️ Please enter a number between 1 and 100', 'neutral');
             this.shakeInput();
             return;
@@ -145,7 +175,7 @@ class NumberGuessingGame {
         this.showFeedback(feedback, className);
         this.addToHistory(guess, className);
         this.updateRangeDisplay();
-        
+
         // Add proximity effect
         if (difference <= 5) {
             this.screenPulse();
@@ -161,9 +191,11 @@ class NumberGuessingGame {
     }
 
     showFeedback(message, className) {
+        if (!this.feedbackMessage) return;
+
         this.feedbackMessage.textContent = message;
         this.feedbackMessage.className = 'feedback-message ' + className;
-        
+
         // Trigger animation
         this.feedbackMessage.style.animation = 'none';
         setTimeout(() => {
@@ -172,16 +204,15 @@ class NumberGuessingGame {
     }
 
     addToHistory(guess, className) {
+        if (!this.historyList) return;
+
         const historyItem = document.createElement('div');
         historyItem.className = 'history-item ' + className;
         historyItem.textContent = guess;
-        
-        // Add tooltip with attempt number
         historyItem.title = `Attempt #${this.attempts}`;
-        
+
         this.historyList.appendChild(historyItem);
-        
-        // Animate entry
+
         setTimeout(() => {
             historyItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }, 100);
@@ -193,20 +224,22 @@ class NumberGuessingGame {
     }
 
     animateNumber(element, targetNumber) {
+        if (!element) return;
+
         const currentNumber = parseInt(element.textContent) || 0;
         if (currentNumber === targetNumber) return;
-        
+
         const duration = 300;
         const steps = 10;
         const increment = (targetNumber - currentNumber) / steps;
         let current = currentNumber;
         let step = 0;
-        
+
         const timer = setInterval(() => {
             step++;
             current += increment;
             element.textContent = Math.round(current);
-            
+
             if (step >= steps) {
                 element.textContent = targetNumber;
                 clearInterval(timer);
@@ -215,38 +248,42 @@ class NumberGuessingGame {
     }
 
     updateRangeDisplay() {
-        this.minRangeDisplay.textContent = this.minRange;
-        this.maxRangeDisplay.textContent = this.maxRange;
-        
-        // Pulse animation for range update
+        if (this.minRangeDisplay) this.minRangeDisplay.textContent = this.minRange;
+        if (this.maxRangeDisplay) this.maxRangeDisplay.textContent = this.maxRange;
+
         const rangeElement = document.querySelector('.hint-range');
-        rangeElement.style.animation = 'none';
-        setTimeout(() => {
-            rangeElement.style.animation = 'fadeInScale 0.5s ease';
-        }, 10);
+        if (rangeElement) {
+            rangeElement.style.animation = 'none';
+            setTimeout(() => {
+                rangeElement.style.animation = 'fadeInScale 0.5s ease';
+            }, 10);
+        }
     }
 
     updateBestScore() {
         if (!this.bestScore || this.attempts < parseInt(this.bestScore)) {
             this.bestScore = this.attempts;
             localStorage.setItem('bestScore', this.bestScore);
-            this.animateNumber(this.bestScoreDisplay, this.bestScore);
-            
-            // Add special effect for new best score
+            if (this.bestScoreDisplay) {
+                this.animateNumber(this.bestScoreDisplay, this.bestScore);
+            }
             this.newRecordAnimation();
         }
     }
 
     endGame() {
-        this.guessInput.disabled = true;
-        this.guessBtn.disabled = true;
-        
-        // Visual feedback
-        this.guessInput.style.opacity = '0.5';
-        this.guessBtn.style.opacity = '0.5';
+        if (this.guessInput) {
+            this.guessInput.disabled = true;
+            this.guessInput.style.opacity = '0.5';
+        }
+        if (this.guessBtn) {
+            this.guessBtn.disabled = true;
+            this.guessBtn.style.opacity = '0.5';
+        }
     }
 
     shakeInput() {
+        if (!this.guessInput) return;
         this.guessInput.style.animation = 'shake 0.5s';
         setTimeout(() => {
             this.guessInput.style.animation = '';
@@ -267,37 +304,48 @@ class NumberGuessingGame {
 
     screenPulse() {
         const gameCard = document.querySelector('.game-card');
-        gameCard.style.animation = 'pulse 0.4s';
-        setTimeout(() => {
-            gameCard.style.animation = '';
-        }, 400);
+        if (gameCard) {
+            gameCard.style.animation = 'pulse 0.4s';
+            setTimeout(() => {
+                gameCard.style.animation = '';
+            }, 400);
+        }
     }
 
     screenShake() {
         const container = document.querySelector('.container');
-        container.style.animation = 'shake 0.6s';
-        setTimeout(() => {
-            container.style.animation = '';
-        }, 600);
+        if (container) {
+            container.style.animation = 'shake 0.6s';
+            setTimeout(() => {
+                container.style.animation = '';
+            }, 600);
+        }
     }
 
     celebrationAnimation() {
         const gameCard = document.querySelector('.game-card');
-        gameCard.style.animation = 'successPulse 1s ease-out';
-        setTimeout(() => {
-            gameCard.style.animation = '';
-        }, 1000);
+        if (gameCard) {
+            gameCard.style.animation = 'successPulse 1s ease-out';
+            setTimeout(() => {
+                gameCard.style.animation = '';
+            }, 1000);
+        }
     }
 
     newRecordAnimation() {
+        if (!this.bestScoreDisplay) return;
         const bestScoreElement = this.bestScoreDisplay.parentElement;
-        bestScoreElement.style.animation = 'successPulse 1s ease-out';
-        setTimeout(() => {
-            bestScoreElement.style.animation = '';
-        }, 1000);
+        if (bestScoreElement) {
+            bestScoreElement.style.animation = 'successPulse 1s ease-out';
+            setTimeout(() => {
+                bestScoreElement.style.animation = '';
+            }, 1000);
+        }
     }
 
     createConfetti() {
+        if (!this.confettiContainer) return;
+
         const colors = ['#8b5cf6', '#ec4899', '#06b6d4', '#10b981', '#f59e0b'];
         const confettiCount = 150;
         const shapes = ['●', '■', '▲', '★', '♦'];
@@ -311,7 +359,7 @@ class NumberGuessingGame {
             confetti.style.fontSize = (Math.random() * 20 + 10) + 'px';
             confetti.style.animationDelay = Math.random() * 0.5 + 's';
             confetti.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
-            
+
             this.confettiContainer.appendChild(confetti);
 
             setTimeout(() => confetti.remove(), 5000);
@@ -319,7 +367,7 @@ class NumberGuessingGame {
     }
 }
 
-// Add enhanced animations to CSS via JavaScript
+// Add animations to CSS
 const style = document.createElement('style');
 style.textContent = `
     @keyframes shake {
@@ -332,17 +380,34 @@ style.textContent = `
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.08); }
     }
-    
-    .input-container {
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
 `;
 document.head.appendChild(style);
 
-// Initialize the game when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    new NumberGuessingGame();
-    
-    // Add smooth scroll behavior
-    document.documentElement.style.scrollBehavior = 'smooth';
+// Initialize game when DOM is ready
+function initGame() {
+    console.log('DOM Content Loaded - Initializing game...');
+    try {
+        game = new NumberGuessingGame();
+        console.log('Game instance created successfully');
+    } catch (error) {
+        console.error('Error initializing game:', error);
+    }
+}
+
+// Multiple initialization methods to ensure it works
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGame);
+} else {
+    // DOM already loaded
+    initGame();
+}
+
+// Fallback initialization
+window.addEventListener('load', function () {
+    if (!game) {
+        console.log('Fallback initialization');
+        initGame();
+    }
 });
+
+console.log('Script loaded successfully');

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game - Premium Edition</title>
+    <meta name="description" content="An immersive number guessing game with stunning visual effects">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="background-animation">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <header class="game-header">
+            <h1 class="title">
+                <span class="title-icon">🎯</span>
+                Number Guessing Game
+            </h1>
+            <p class="subtitle">Guess the secret number between 1 and 100</p>
+        </header>
+
+        <div class="game-card">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-label">Attempts</span>
+                    <span class="stat-value" id="attempts">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Best Score</span>
+                    <span class="stat-value" id="bestScore">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Remaining</span>
+                    <span class="stat-value" id="remaining">10</span>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <div class="feedback-container" id="feedbackContainer">
+                    <div class="feedback-message" id="feedbackMessage">
+                        Make your first guess!
+                    </div>
+                </div>
+
+                <div class="input-container">
+                    <input 
+                        type="number" 
+                        id="guessInput" 
+                        class="guess-input" 
+                        placeholder="Enter your guess"
+                        min="1"
+                        max="100"
+                    >
+                    <button id="guessBtn" class="guess-btn">
+                        <span>Guess</span>
+                        <div class="btn-glow"></div>
+                    </button>
+                </div>
+
+                <div class="hint-bar">
+                    <div class="hint-range">
+                        <span id="minRange">1</span>
+                        <div class="range-separator"></div>
+                        <span id="maxRange">100</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="history-container" id="historyContainer">
+                <h3 class="history-title">Your Guesses</h3>
+                <div class="history-list" id="historyList"></div>
+            </div>
+        </div>
+
+        <button id="restartBtn" class="restart-btn">
+            <span>🔄 New Game</span>
+        </button>
+    </div>
+
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

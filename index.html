@@ -17,30 +17,55 @@
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
+        <div class="glass-grid"></div>
     </div>
 
     <div class="container">
         <header class="game-header">
             <h1 class="title">
                 <span class="title-icon">🎯</span>
-                Number Guessing Game
+                Numerical <span class="accent-text">Ninja</span>
             </h1>
-            <p class="subtitle">Test your intuition and guess the secret number!</p>
+            <p class="subtitle">The ultimate intuition test.</p>
         </header>
+
+        <div class="difficulty-selector" id="difficultySelector">
+            <button class="diff-btn active" data-difficulty="easy">
+                <span class="diff-icon">🌱</span>
+                <span class="diff-name">Easy</span>
+                <span class="diff-desc">1-50 • 12 Tries</span>
+            </button>
+            <button class="diff-btn" data-difficulty="medium">
+                <span class="diff-icon">🔥</span>
+                <span class="diff-name">Medium</span>
+                <span class="diff-desc">1-100 • 10 Tries</span>
+            </button>
+            <button class="diff-btn" data-difficulty="hard">
+                <span class="diff-icon">💀</span>
+                <span class="diff-name">Hard</span>
+                <span class="diff-desc">1-200 • 8 Tries</span>
+            </button>
+        </div>
 
         <div class="game-card">
             <div class="stats-container">
                 <div class="stat-item">
-                    <span class="stat-label">Attempts</span>
-                    <span class="stat-value" id="attempts">0</span>
+                    <div class="mastery-wheel-container">
+                        <svg class="mastery-wheel" viewBox="0 0 100 100">
+                            <circle class="wheel-bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="wheel-progress" id="masteryWheel" cx="50" cy="50" r="45"></circle>
+                        </svg>
+                        <span class="stat-value" id="attempts">0</span>
+                    </div>
+                    <span class="stat-label">Guesses</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">Best Score</span>
                     <span class="stat-value" id="bestScore">-</span>
+                    <span class="stat-label">Best Record</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">Remaining</span>
                     <span class="stat-value" id="remaining">10</span>
+                    <span class="stat-label">Left</span>
                 </div>
             </div>
 
